@@ -1,0 +1,11 @@
+terraform {
+  required_version = ">= 1.5.0"
+
+  backend "s3" {
+    bucket         = "dev-gopi-dev-s3-bucket"
+    key            = "global/terraform.tfstate"
+    region         = "ap-south-1"
+    dynamodb_table = "dev-terraform-lock-table-dev"
+    encrypt        = true
+  }
+}

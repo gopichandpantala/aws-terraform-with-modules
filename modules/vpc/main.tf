@@ -7,7 +7,8 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = true
 
   tags = {
-    Name = "${var.project_name}-vpc"
+    Name        = "${var.environment}-${var.project_name}-vpc"
+    Environment = var.environment
   }
 }
 
@@ -18,7 +19,8 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "${var.project_name}-igw"
+    Name        = "${var.environment}-${var.project_name}-igw"
+    Environment = var.environment
   }
 }
 
@@ -32,7 +34,8 @@ resource "aws_subnet" "public" {
   availability_zone       = var.availability_zone_public
 
   tags = {
-    Name = "${var.project_name}-public-subnet"
+    Name        = "${var.environment}-${var.project_name}-public-subnet"
+    Environment = var.environment
   }
 }
 
@@ -45,7 +48,8 @@ resource "aws_subnet" "private" {
   availability_zone = var.availability_zone_private
 
   tags = {
-    Name = "${var.project_name}-private-subnet"
+    Name        = "${var.environment}-${var.project_name}-private-subnet"
+    Environment = var.environment
   }
 }
 
@@ -56,7 +60,8 @@ resource "aws_eip" "nat" {
   domain = "vpc"
 
   tags = {
-    Name = "${var.project_name}-nat-eip"
+    Name        = "${var.environment}-${var.project_name}-nat-eip"
+    Environment = var.environment
   }
 }
 
@@ -68,7 +73,8 @@ resource "aws_nat_gateway" "nat" {
   subnet_id     = aws_subnet.public.id
 
   tags = {
-    Name = "${var.project_name}-nat-gateway"
+    Name        = "${var.environment}-${var.project_name}-nat-gateway"
+    Environment = var.environment
   }
 
   depends_on = [aws_internet_gateway.igw]
@@ -86,11 +92,12 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "${var.project_name}-public-rt"
+    Name        = "${var.environment}-${var.project_name}-public-rt"
+    Environment = var.environment
   }
 }
 
-# Associate Public Subnet with Public Route Table
+# Associate Public Subnet
 resource "aws_route_table_association" "public_assoc" {
   subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public.id
@@ -108,11 +115,12 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = "${var.project_name}-private-rt"
+    Name        = "${var.environment}-${var.project_name}-private-rt"
+    Environment = var.environment
   }
 }
 
-# Associate Private Subnet with Private Route Table
+# Associate Private Subnet
 resource "aws_route_table_association" "private_assoc" {
   subnet_id      = aws_subnet.private.id
   route_table_id = aws_route_table.private.id

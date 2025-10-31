@@ -1,14 +1,15 @@
-# Create a Security Group
+# EC2 Security Group
 resource "aws_security_group" "ec2_sg" {
   name        = var.security_group_name
   description = "Allow SSH and HTTP access"
+  vpc_id      = var.vpc_id
 
   ingress {
     description = "SSH"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # allow from anywhere (for testing)
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
@@ -22,19 +23,24 @@ resource "aws_security_group" "ec2_sg" {
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "-1" # all traffic
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.environment}-ec2-sg"
   }
 }
 
-# Create an EC2 instance
+# EC2 Instance
 resource "aws_instance" "ec2_instance" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
   key_name               = var.key_name
+  subnet_id              = var.subnet_id
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
 
   tags = {
-    Name = var.instance_name
+    Name = "${var.environment}-ec2-instance"
   }
 }
